@@ -1,17 +1,26 @@
 function doGet(e) {
-  // Reemplaza "Inventario" por el nombre exacto de la pestaña de tu Google Sheet
-  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Inventario"); 
+  // Conectamos exactamente con la pestaña "Catalogo"
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Catalogo"); 
+  
+  if (!sheet) {
+    return ContentService.createTextOutput(JSON.stringify({error: "No se encontró la pestaña 'Catalogo'"}))
+                         .setMimeType(ContentService.MimeType.JSON);
+  }
+
   var data = sheet.getDataRange().getValues();
   var productos = [];
   
-  // Asume que la Fila 1 tiene los títulos (Código, Nombre, Precio, Imagen) y los datos empiezan en la Fila 2
+  // Recorre las filas desde la fila 2 (índice 1) en adelante
   for (var i = 1; i < data.length; i++) {
-    productos.push({
-      codigo: data[i][0], // Columna A
-      nombre: data[i][1], // Columna B
-      precio: data[i][2], // Columna C
-      imagen: data[i][3]  // Columna D (Link de la foto)
-    });
+    // Evita filas vacías
+    if (data[i][0] !== "" || data[i][1] !== "") {
+      productos.push({
+        codigo: data[i][0], // Columna A
+        nombre: data[i][1], // Columna B
+        precio: data[i][2], // Columna C
+        imagen: data[i][3]  // Columna D (Link de la foto)
+      });
+    }
   }
 
   var output = ContentService.createTextOutput(JSON.stringify(productos));
