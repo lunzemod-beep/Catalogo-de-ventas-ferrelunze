@@ -1,0 +1,20 @@
+function doGet(e) {
+  // Reemplaza "Inventario" por el nombre exacto de la pestaña de tu Google Sheet
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Inventario"); 
+  var data = sheet.getDataRange().getValues();
+  var productos = [];
+  
+  // Asume que la Fila 1 tiene los títulos (Código, Nombre, Precio, Imagen) y los datos empiezan en la Fila 2
+  for (var i = 1; i < data.length; i++) {
+    productos.push({
+      codigo: data[i][0], // Columna A
+      nombre: data[i][1], // Columna B
+      precio: data[i][2], // Columna C
+      imagen: data[i][3]  // Columna D (Link de la foto)
+    });
+  }
+
+  var output = ContentService.createTextOutput(JSON.stringify(productos));
+  output.setMimeType(ContentService.MimeType.JSON);
+  return output;
+}
